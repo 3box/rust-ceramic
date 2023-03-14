@@ -19,7 +19,7 @@ impl Commit {
         header.try_fill(&mut rng)?;
         let header = Some(header.to_vec());
         let genesis_commit = crate::GenesisCommit {
-            data: data,
+            data,
             header: crate::GenesisHeader {
                 controllers: &args.controllers,
                 model: &model,
@@ -35,15 +35,15 @@ impl Commit {
         // create jws with encoded_cid and { linkedBlock: encoded_data }
         // did_createjws with { did: id, linkedBlock: encoded_data, payload: encoded_cid }
         let claims = Claims {
-            did: &args.signer,
+            did: args.signer,
             //protected: None,
             linked_block: encoded_data,
             payload: encoded_cid,
         };
         let signed = Signed::new(&claims, args.signer).await?;
         Ok(Self {
-            cid: cid,
-            signed: signed,
+            cid,
+            signed,
         })
     }
 }

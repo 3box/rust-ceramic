@@ -16,7 +16,7 @@ pub use signed::Signed;
 use anyhow::Result;
 use serde::Serialize;
 
-const SEP: &'static str = "model";
+const SEP: &str = "model";
 
 pub struct CommitArgs<'a> {
     pub signer: &'a DidDocument,

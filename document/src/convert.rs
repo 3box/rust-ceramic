@@ -35,7 +35,7 @@ async fn did_as_jwk(resolver: &dyn DIDResolver, id: &str) -> anyhow::Result<Opti
 }
 
 fn pk_as_jwk(public_key: &str) -> anyhow::Result<JWK> {
-    let (_, data) = multibase::decode(&public_key)?;
+    let (_, data) = multibase::decode(public_key)?;
     let curve = match data[0..2] {
         [0xed, 0x01] => "Ed25519",
         [0xe7, 0x01] => "SECP256K1",
@@ -128,8 +128,8 @@ mod tests {
     #[tokio::test]
     async fn should_fail_to_convert_did_pkh_with_vm() {
         let did = DidDocument::new("did:pkh:eip155:1:0xb9c5714089478a327f09197987f16f9e5d936e8a");
-        if let Ok(_) = convert(&did).await {
-            panic!("Cannot get JWK from document");
+        if convert(&did).await.is_ok() {
+            panic!("Should not get JWK from document");
         }
     }
 }
