@@ -1,0 +1,16 @@
+[package]
+name = "ceramic-core"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow.workspace = true
+cid.workspace = true
+multibase.workspace = true
+serde.workspace = true
+serde_ipld_dagcbor = "0.3.0"
