@@ -25,8 +25,8 @@ impl Ahash {
         hasher.finalize().try_into().unwrap()
     }
 
-    pub fn digest(s: &str) -> Ahash {
-        let d = Ahash::sha256_digest(s);
+    pub fn digest(key: &str) -> Ahash {
+        let d = Ahash::sha256_digest(key);
         Ahash([
             u32::from_le_bytes(d[0..4].try_into().unwrap()),
             u32::from_le_bytes(d[4..8].try_into().unwrap()),
@@ -37,6 +37,17 @@ impl Ahash {
             u32::from_le_bytes(d[24..28].try_into().unwrap()),
             u32::from_le_bytes(d[28..32].try_into().unwrap()),
         ])
+    }
+
+    pub fn digest_many<'a, I>(keys: I) -> Ahash 
+    where
+        I: Iterator<Item = &'a str>
+    {
+        let mut total = Ahash::identity();
+        for key in keys {
+            total = total + Ahash::digest(key)
+        }
+        total
     }
 
     pub fn to_hex(&self) -> String {
@@ -107,21 +118,15 @@ mod tests {
 
     #[test]
     fn word_lists(){
-        let cases = [
-            [include_str!("tests/bip_39.txt"), "0D021C91D40FD1D87C3ECECB3DEECA30EA3768F87A6618EDD5E6878F4727D7B2"],
-            [include_str!("tests/eff_large_wordlist.txt"), "339BEABED2F5700BEFF323A75680E5A16D0DA176816665355A67817A73302782"],
+        for [words, expected] in [
+            [include_str!("tests/bip_39.txt"),               "0D021C91D40FD1D87C3ECECB3DEECA30EA3768F87A6618EDD5E6878F4727D7B2"],
+            [include_str!("tests/eff_large_wordlist.txt"),   "339BEABED2F5700BEFF323A75680E5A16D0DA176816665355A67817A73302782"],
             [include_str!("tests/eff_short_wordlist_1.txt"), "70907533251C0E2B66552827B29A5C4F381F4301C961C194B066C21B005A5A73"],
             [include_str!("tests/eff_short_wordlist_2.txt"), "618BD4C217340D8EF106048CF3341DDD6C366695F6A914233F22EF16E8E84DD3"],
-            [include_str!("tests/wordle_words5_big.txt"), "F6ED9C0621C12669791A97B71BAB582B05951F7B2827AAB31A6212381E13D769"],
-            [include_str!("tests/wordle_words5.txt"), "11013813008811902644706A2874A0E155BE2ACC17FA6FA953C9406450DF870F"],
-        ];
-
-        for [dict, expected] in cases {
-            let mut total = Ahash::identity();
-            for word in dict.split(" ") {
-                total = total + Ahash::digest(word)
-            }
-            assert_eq!(total.to_hex(), expected)
+            [include_str!("tests/wordle_words5_big.txt"),    "F6ED9C0621C12669791A97B71BAB582B05951F7B2827AAB31A6212381E13D769"],
+            [include_str!("tests/wordle_words5.txt"),        "11013813008811902644706A2874A0E155BE2ACC17FA6FA953C9406450DF870F"],
+        ] {
+            assert_eq!(Ahash::digest_many(words.split(" ")).to_hex(), expected);
         }
     }
 }
