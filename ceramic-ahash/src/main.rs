@@ -22,12 +22,14 @@ impl Ahash {
     fn sha256_digest(s: &str) -> [u8; 32] {
         let mut hasher = Sha2_256::default();
         hasher.update(s.as_bytes());
+        // sha256 is 32 bytes safe to unwrap to [u8; 32]
         hasher.finalize().try_into().unwrap()
     }
 
     pub fn digest(key: &str) -> Ahash {
         let d = Ahash::sha256_digest(key);
         Ahash([
+            // 4 byte slices safe to unwrap to [u8; 4]
             u32::from_le_bytes(d[0..4].try_into().unwrap()),
             u32::from_le_bytes(d[4..8].try_into().unwrap()),
             u32::from_le_bytes(d[8..12].try_into().unwrap()),
