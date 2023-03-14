@@ -9,8 +9,8 @@ pub use ssi;
 pub use ssi::did::Document as DidDocument;
 
 pub use ceramic_core::*;
-pub use cid;
 pub use ceramic_stream_id::{Cid, StreamId};
+pub use cid;
 pub use signed::Signed;
 
 use anyhow::Result;
@@ -25,7 +25,10 @@ pub struct CommitArgs<'a> {
 }
 
 impl<'a> CommitArgs<'a> {
-    pub async fn deterministic_commit<T: Serialize>(&self, data: &T) -> Result<deterministic_commit::DeterministicCommit> {
+    pub async fn deterministic_commit<T: Serialize>(
+        &self,
+        data: &T,
+    ) -> Result<deterministic_commit::DeterministicCommit> {
         let cmt = deterministic_commit::DeterministicCommit::new(self, data)?;
         Ok(cmt)
     }

@@ -1,6 +1,6 @@
 use crate::DidDocument;
-use ssi::jwk::Algorithm;
 use serde::{Deserialize, Serialize};
+use ssi::jwk::Algorithm;
 
 #[derive(Serialize, Deserialize)]
 pub struct Signed(String);

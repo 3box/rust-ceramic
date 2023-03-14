@@ -10,9 +10,6 @@ pub struct StreamId {
 
 impl StreamId {
     pub fn document(id: Cid) -> Self {
-        Self {
-            r#type: 3,
-            cid: id,
-        }
+        Self { r#type: 3, cid: id }
     }
 }

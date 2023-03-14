@@ -1,9 +1,9 @@
 use crate::CommitArgs;
-use ceramic_core::DagCborEncoded;
 use anyhow::Result;
+use ceramic_core::DagCborEncoded;
 use serde::Serialize;
 
-pub struct DeterministicCommit  {
+pub struct DeterministicCommit {
     pub encoded: DagCborEncoded,
 }
 
@@ -18,12 +18,10 @@ impl DeterministicCommit {
                 model: &model,
                 sep: crate::SEP,
                 header: &header,
-            }
+            },
         };
 
         let data = DagCborEncoded::new(&genesis_commit)?;
-        Ok(Self {
-            encoded: data,
-        })
+        Ok(Self { encoded: data })
     }
 }

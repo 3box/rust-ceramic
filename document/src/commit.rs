@@ -1,7 +1,7 @@
 use crate::{CommitArgs, Signed};
-use ceramic_core::DagCborEncoded;
 use anyhow::Result;
-use cid::{Cid, multibase};
+use ceramic_core::DagCborEncoded;
+use cid::{multibase, Cid};
 use multihash::{Code, MultihashDigest};
 use rand::Fill;
 use serde::Serialize;
@@ -25,14 +25,11 @@ impl Commit {
                 model: &model,
                 sep: crate::SEP,
                 header: &header,
-            }
+            },
         };
         // encode our commit with dag cbor, hashing that to create cid
         let linked_block = DagCborEncoded::new(&genesis_commit)?;
-        let cid = cid::Cid::new_v1(
-            0x12,
-            Code::Sha3_256.digest(linked_block.as_ref()),
-        );
+        let cid = cid::Cid::new_v1(0x12, Code::Sha3_256.digest(linked_block.as_ref()));
         let encoded_cid = multibase::encode(multibase::Base::Base64Url, cid.to_bytes());
         let encoded_data = multibase::encode(multibase::Base::Base64, linked_block);
         // create jws with encoded_cid and { linkedBlock: encoded_data }
@@ -52,7 +49,7 @@ impl Commit {
 }
 
 #[derive(Serialize)]
-struct Claims<'a,> {
+struct Claims<'a> {
     did: &'a crate::DidDocument,
     //#[serde(skip_serializing_if = "Option::is_none")]
     //protected: Option<&'a Caco>,

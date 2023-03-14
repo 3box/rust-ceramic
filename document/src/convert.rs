@@ -1,13 +1,12 @@
-use cid::multibase;
 use crate::DidDocument;
+use cid::multibase;
 use once_cell::sync::Lazy;
 use ssi::did::{Resource, VerificationMethod};
-use ssi::jwk::{Base64urlUInt, JWK, OctetParams, Params};
-use ssi::did_resolve::{dereference, Content, DereferencingInputMetadata, DIDResolver};
+use ssi::did_resolve::{dereference, Content, DIDResolver, DereferencingInputMetadata};
+use ssi::jwk::{Base64urlUInt, OctetParams, Params, JWK};
 
-static DID_TYPE_REGEX: Lazy<regex::Regex> = Lazy::new(|| {
-    regex::Regex::new(r#"did:(?P<T>[^:]+):(?P<K>[A-Za-z0-9:]+)"#).unwrap()
-});
+static DID_TYPE_REGEX: Lazy<regex::Regex> =
+    Lazy::new(|| regex::Regex::new(r#"did:(?P<T>[^:]+):(?P<K>[A-Za-z0-9:]+)"#).unwrap());
 
 async fn did_as_jwk(resolver: &dyn DIDResolver, id: &str) -> anyhow::Result<Option<JWK>> {
     let (res, object, _) = dereference(resolver, id, &DereferencingInputMetadata::default()).await;
@@ -86,10 +85,11 @@ mod tests {
     async fn should_convert_did_key_generated_without_vm() {
         let jwk = JWK::generate_ed25519().unwrap();
         let did = did_method_key::DIDKey
-            .generate(&ssi::did::Source::Key(&jwk)).unwrap();
+            .generate(&ssi::did::Source::Key(&jwk))
+            .unwrap();
         let did = DidDocument::new(&did);
         let other_jwk = convert(&did).await.unwrap();
-        if let (Params::OKP(did), Params::OKP(orig)) = (other_jwk.params, jwk.params)  {
+        if let (Params::OKP(did), Params::OKP(orig)) = (other_jwk.params, jwk.params) {
             assert_eq!(did.public_key, orig.public_key)
         }
     }
@@ -98,7 +98,8 @@ mod tests {
     async fn should_convert_did_key_generated_with_vm() {
         let jwk = ssi::jwk::JWK::generate_ed25519().unwrap();
         let did = did_method_key::DIDKey
-            .generate(&ssi::did::Source::Key(&jwk)).unwrap();
+            .generate(&ssi::did::Source::Key(&jwk))
+            .unwrap();
         let pko = ssi::did::VerificationMethodMap {
             public_key_jwk: Some(jwk.clone()),
             ..Default::default()
@@ -106,9 +107,10 @@ mod tests {
         let did = ssi::did::DocumentBuilder::default()
             .id(did)
             .verification_method(vec![VerificationMethod::Map(pko)])
-            .build().unwrap();
+            .build()
+            .unwrap();
         let other_jwk = convert(&did).await.unwrap();
-        if let (Params::OKP(did), Params::OKP(orig)) = (other_jwk.params, jwk.params)  {
+        if let (Params::OKP(did), Params::OKP(orig)) = (other_jwk.params, jwk.params) {
             assert_eq!(did.public_key, orig.public_key)
         }
     }
