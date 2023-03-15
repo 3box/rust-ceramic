@@ -1015,6 +1015,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "ceramic-ahash"
+version = "0.1.0"
+dependencies = [
+ "expect-test",
+ "hex",
+ "multihash 0.18.0",
+]
+
+[[package]]
 name = "ceramic-kubo-rpc"
 version = "0.1.0"
 dependencies = [
@@ -4121,6 +4130,23 @@ dependencies = [
  "multihash-derive",
  "serde",
  "serde-big-array",
+ "sha2 0.10.6",
+ "sha3",
+ "unsigned-varint",
+]
+
+[[package]]
+name = "multihash"
+version = "0.18.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15e5d911412e631e1de11eb313e4dd71f73fd964401102aab23d6c8327c431ba"
+dependencies = [
+ "blake2b_simd",
+ "blake2s_simd",
+ "blake3",
+ "core2",
+ "digest 0.10.6",
+ "multihash-derive",
  "sha2 0.10.6",
  "sha3",
  "unsigned-varint",
